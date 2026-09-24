@@ -1,0 +1,32 @@
+app = 'harba'
+primary_region = 'lhr'
+
+[build]
+
+[env]
+  # Where server/db.js writes its SQLite file - matches the volume mount
+  # below. Not secret; the review data itself is protected by
+  # REVIEW_ACCESS_TOKEN (set with `fly secrets set`), not by this path.
+  DATA_DIR = '/data'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[mounts]
+  # Persists the Technical Review workspace's SQLite database (server/db.js)
+  # across deploys and restarts. Created once with:
+  #   fly volumes create harba_data --region lhr --size 1
+  # A volume lives on one machine, so this ties review data to whichever
+  # machine holds it - acceptable for this internal tool's scale.
+  source = 'harba_data'
+  destination = '/data'
