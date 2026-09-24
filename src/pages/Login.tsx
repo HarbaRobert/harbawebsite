@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertCircle, Check, Eye, EyeOff } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { getMarketingSiteUrl } from '../../config/siteConfig.mjs'
 import { useLoginForm } from '../hooks/useLoginForm'
+
+function cx(...parts: Array<string | false | null | undefined>): string {
+  return parts.filter(Boolean).join(' ')
+}
 
 // "Back to Harba" and the wordmark leave the signed-in application for the
 // public marketing site. Today that is the same repository (getMarketingSiteUrl()
@@ -16,27 +20,61 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   return <p className="field-error" id={id} role="alert">{message}</p>
 }
 
-/** Decorative only (aria-hidden) - a restrained impression of Teammates, a
- * Pipeline and Big Brain, never a literal feature list or architecture
- * diagram. The single moving piece is the lime progress dot; everything
- * else is static, and the whole thing is hidden under prefers-reduced-motion
- * by the .login-composition-dot CSS rule turning its animation off (see
- * the global reduced-motion rule in App.css, which already covers this). */
+/**
+ * Whether the decorative composition below is allowed to animate: not
+ * under prefers-reduced-motion, and not while the tab is hidden. Defaults
+ * to "animating" so the very first client render has something to correct
+ * only in an effect, never a render-phase window/document read - this page
+ * is never prerendered with real body content (see DRAFT_ROUTES), so there
+ * is no hydration mismatch risk here, but the pattern is kept consistent
+ * with the rest of the codebase (see useJourneyScene in
+ * HarbaEnquiryVisual.tsx) in case that ever changes.
+ */
+function useMotionAllowed() {
+  const [allowed, setAllowed] = useState(true)
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setAllowed(!query.matches && document.visibilityState === 'visible')
+    update()
+    query.addEventListener('change', update)
+    document.addEventListener('visibilitychange', update)
+    return () => {
+      query.removeEventListener('change', update)
+      document.removeEventListener('visibilitychange', update)
+    }
+  }, [])
+
+  return allowed
+}
+
+/** Decorative only (aria-hidden, and never separately announced - there is
+ * no live region here) - a restrained impression of Teammates, a Pipeline
+ * and Big Brain working together, never a literal feature list, dashboard
+ * or architecture diagram. The single animated piece is a slow lime fill
+ * that travels through the three stations and rests once "connected";
+ * .is-paused (driven by useMotionAllowed) stops it under
+ * prefers-reduced-motion or when the tab is hidden, and the sitewide
+ * reduced-motion rule in App.css is a second, CSS-only backstop. */
 function LoginComposition() {
+  const motionAllowed = useMotionAllowed()
+
   return (
-    <div className="login-composition" aria-hidden="true">
+    <div className={cx('login-composition', !motionAllowed && 'is-paused')} aria-hidden="true">
       <div className="login-composition-row">
         <span className="login-composition-node">TEAMMATES</span>
         <span className="login-composition-node">PIPELINES</span>
         <span className="login-composition-node">BIG BRAIN</span>
       </div>
       <div className="login-composition-track">
+        <span className="login-composition-tick" />
+        <span className="login-composition-tick" />
+        <span className="login-composition-tick" />
         <span className="login-composition-fill" />
-        <span className="login-composition-dot" />
       </div>
       <div className="login-composition-status">
-        <Check aria-hidden="true" />
-        <span>Workspace ready</span>
+        <span className="login-composition-mark" />
+        <span>One connected workspace</span>
       </div>
     </div>
   )
@@ -120,9 +158,15 @@ export function Login() {
               </div>
               <FieldError id="login-password-error" message={errors.password} />
 
-              {/* No "Forgotten your password?" link: this page has no
-                  password-reset route to send visitors to yet (see the
-                  completion report). Adding one here would be a dead link. */}
+              {/* No "Forgotten your password?" link: re-checked on this
+                  pass - there is still no authentication framework, no
+                  password-reset route/controller/token storage and no
+                  configured transactional email service anywhere in this
+                  project (fly secrets list -a harba returns empty). Per the
+                  brief's own instruction for this exact case, a dead or
+                  fabricated reset link would be worse than omitting it; the
+                  "Need access?" route below remains the one real path. See
+                  the completion report for what is still required. */}
 
               <label className="checkbox-field" htmlFor="login-remember">
                 <input id="login-remember" type="checkbox" name="remember" />

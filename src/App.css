@@ -527,18 +527,31 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 .login-brand { background: var(--paper); border-right: 1px solid var(--line); padding: 64px 56px; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
 .login-brand-inner { max-width: 460px; }
 .login-statement { font-size: clamp(28px, 3vw, 40px); line-height: 1.08; letter-spacing: -.03em; font-weight: 500; color: var(--ink); margin: 14px 0 18px; }
-.login-brand-support { font-size: 15px; max-width: 380px; }
+.login-brand-support { font-size: 15px; max-width: 420px; }
 .login-brand-tagline { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); margin: 0; }
 
-.login-composition { margin-top: 36px; max-width: 380px; border: 1px solid var(--line); background: var(--paper-light); padding: 20px; }
-.login-composition-row { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.login-composition-node { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); padding: 7px 9px; border: 1px solid var(--line); background: var(--paper); }
-.login-composition-track { position: relative; height: 3px; background: var(--line); margin: 18px 0 14px; }
-.login-composition-fill { position: absolute; inset: 0; width: 46%; background: var(--acid); }
-.login-composition-dot { position: absolute; top: 50%; left: 46%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--acid); animation: loginDotPulse 2.4s ease-in-out infinite; }
-.login-composition-status { display: flex; align-items: center; gap: 7px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
-.login-composition-status svg { width: 14px; color: var(--acid); }
-@keyframes loginDotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.5); } }
+/* Decorative composition: illustrative, not a status readout. One
+   restrained lime accent (the travelling fill + the small mark below),
+   never a checkmark implying a verified live result. */
+.login-composition { margin-top: 40px; max-width: 440px; border: 1px solid var(--line); background: var(--paper-light); padding: 28px 30px; }
+.login-composition-row { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.login-composition-node { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); padding: 10px 13px; border: 1px solid var(--line); background: var(--paper); }
+.login-composition-track { position: relative; height: 4px; background: var(--line); margin: 26px 0 18px; }
+.login-composition-fill { position: absolute; inset: 0; width: 4%; background: var(--acid); animation: loginProgress 7s ease-in-out infinite; }
+.login-composition-tick { position: absolute; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--paper-light); border: 1px solid var(--line); z-index: 1; }
+.login-composition-tick:nth-child(1) { left: 4%; }
+.login-composition-tick:nth-child(2) { left: 50%; }
+.login-composition-tick:nth-child(3) { left: 96%; }
+.login-composition-status { display: flex; align-items: center; gap: 9px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+.login-composition-mark { width: 6px; height: 6px; flex: none; background: var(--acid); }
+.login-composition.is-paused .login-composition-fill { animation-play-state: paused; }
+@keyframes loginProgress {
+  0% { width: 4%; }
+  35% { width: 50%; }
+  65% { width: 96%; }
+  85% { width: 96%; }
+  100% { width: 4%; }
+}
 
 /* Sign-in area: dark-green surface, the obvious purpose of the page. */
 .login-panel { background: var(--night); color: var(--paper); display: flex; align-items: center; justify-content: center; padding: 56px 48px; }
@@ -555,13 +568,20 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 .login-panel .field-error { color: #e08a76; }
 .login-panel .form-error { display: flex; align-items: flex-start; gap: 8px; color: #e08a76; border-color: #e08a76; }
 .login-panel .form-error svg { width: 15px; flex: none; margin-top: 1px; }
-.login-panel .checkbox-field { color: #aeb8ad; }
+/* Whole-row clickable, ~44px minimum target height, without changing the
+   shared .checkbox-field base rule used by the working-session/demo forms. */
+.login-panel .checkbox-field { color: #aeb8ad; min-height: 44px; align-items: center; padding: 4px 0; margin: 0; }
 .login-panel .checkbox-field a { color: var(--paper); }
+.login-panel .checkbox-field input[type="checkbox"] { width: 18px !important; height: 18px !important; flex: none; }
+.login-panel .checkbox-field input[type="checkbox"]:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
 
 .login-password-row { position: relative; display: flex; align-items: center; }
-.login-password-row input { padding-right: 46px; }
-.login-password-toggle { position: absolute; right: 6px; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border: 0; background: transparent; color: #aeb8ad; cursor: pointer; }
+.login-password-row input { padding-right: 54px; }
+/* ~44x44 hit area (visually restrained: transparent background, small
+   icon) - enlarging this never moves or resizes the input itself. */
+.login-password-toggle { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; background: transparent; color: #aeb8ad; cursor: pointer; }
 .login-password-toggle:hover, .login-password-toggle:focus-visible { color: var(--paper); }
+.login-password-toggle:focus-visible { outline: 2px solid var(--acid); outline-offset: -2px; }
 .login-password-toggle svg { width: 18px; }
 
 .login-submit { width: 100%; margin-top: 4px; }
@@ -587,4 +607,23 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
   .login-statement { font-size: 26px; margin: 10px 0 0; }
   .login-panel { padding: 36px 20px 44px; }
   .login-panel-inner { max-width: none; }
+}
+
+/* Short laptops (e.g. 1366x768, 1280x720) and other short-but-wide
+   viewports: the two-column split stays, but padding/spacing compresses
+   so the form, its button and the footer's Privacy/Terms links stay
+   comfortably reachable without the brand column feeling cramped. */
+@media (max-height: 760px) {
+  .login-header { height: 60px; }
+  .login-brand, .login-panel { padding-top: 32px; padding-bottom: 32px; }
+  .login-composition { margin-top: 24px; padding: 20px 22px; }
+  .login-composition-track { margin: 18px 0 14px; }
+  .login-panel-support { margin-bottom: 20px; }
+  .login-access-help { margin-top: 18px; padding-top: 16px; }
+  .login-footer { padding: 14px 0; }
+}
+
+@media (max-height: 620px) {
+  .login-composition { display: none; }
+  .login-brand-support { display: none; }
 }

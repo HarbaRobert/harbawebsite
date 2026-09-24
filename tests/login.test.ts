@@ -221,13 +221,74 @@ describe.skipIf(!browserPath)('/login (browser)', () => {
     await page.close()
   })
 
-  it('respects prefers-reduced-motion (no animation on the decorative composition dot)', async () => {
+  it('respects prefers-reduced-motion (no animation on the decorative composition fill)', async () => {
     const page = await browser.newPage()
     await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
     await page.setViewport({ width: 1280, height: 900 })
     await page.goto(`${BASE}/login`, { waitUntil: 'networkidle0' })
-    const animationName = await page.$eval('.login-composition-dot', (el) => getComputedStyle(el).animationName)
+    const animationName = await page.$eval('.login-composition-fill', (el) => getComputedStyle(el).animationName)
     expect(animationName).toBe('none')
+    await page.close()
+  })
+
+  it('pauses the composition animation when the tab is hidden, and resumes when visible again', async () => {
+    const page = await newPage()
+    const playStateVisible = await page.$eval('.login-composition-fill', (el) => getComputedStyle(el).animationPlayState)
+    expect(playStateVisible).toBe('running')
+
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    const playStateHidden = await page.$eval('.login-composition-fill', (el) => getComputedStyle(el).animationPlayState)
+    expect(playStateHidden).toBe('paused')
+    await page.close()
+  })
+
+  it('replaces the old "Workspace ready" status with "One connected workspace" and removes the tick icon', async () => {
+    const page = await newPage()
+    const bodyText = await page.evaluate(() => document.body.textContent || '')
+    expect(bodyText).not.toMatch(/workspace ready/i)
+    expect(bodyText).toContain('One connected workspace')
+    const svgInStatus = await page.$('.login-composition-status svg')
+    expect(svgInStatus).toBeNull()
+    await page.close()
+  })
+
+  it('enlarges the password toggle and the remember-me row to ~44x44px targets, without moving the password field', async () => {
+    const page = await newPage()
+    const toggleBox = await page.$eval('.login-password-toggle', (el) => { const r = el.getBoundingClientRect(); return { width: r.width, height: r.height } })
+    expect(toggleBox.width).toBeGreaterThanOrEqual(44)
+    expect(toggleBox.height).toBeGreaterThanOrEqual(44)
+
+    const passwordBoxBefore = await page.$eval('#login-password', (el) => el.getBoundingClientRect().toJSON())
+    await page.click('.login-password-toggle')
+    const passwordBoxAfter = await page.$eval('#login-password', (el) => el.getBoundingClientRect().toJSON())
+    expect(passwordBoxAfter.width).toBe(passwordBoxBefore.width)
+    expect(passwordBoxAfter.height).toBe(passwordBoxBefore.height)
+    expect(passwordBoxAfter.x).toBe(passwordBoxBefore.x)
+    expect(passwordBoxAfter.y).toBe(passwordBoxBefore.y)
+
+    const checkboxRowHeight = await page.$eval('label[for="login-remember"]', (el) => el.getBoundingClientRect().height)
+    expect(checkboxRowHeight).toBeGreaterThanOrEqual(44)
+    await page.close()
+  })
+
+  it('makes the entire remember-me row clickable without submitting the form', async () => {
+    const page = await newPage()
+    // Click near the right edge of the label, well past the visible
+    // checkbox and text, to prove the whole row (not just the checkbox
+    // itself) responds.
+    const box = await page.$eval('label[for="login-remember"]', (el) => el.getBoundingClientRect().toJSON())
+    await page.mouse.click(box.x + box.width - 4, box.y + box.height / 2)
+    const checked = await page.$eval('#login-remember', (el) => (el as HTMLInputElement).checked)
+    expect(checked).toBe(true)
+    // Clicking the label must never submit the form.
+    const stillOnLogin = page.url().endsWith('/login')
+    expect(stillOnLogin).toBe(true)
+    const submitting = await page.$eval('.login-submit', (el) => (el as HTMLButtonElement).disabled)
+    expect(submitting).toBe(false)
     await page.close()
   })
 
@@ -239,6 +300,45 @@ describe.skipIf(!browserPath)('/login (browser)', () => {
     await page.keyboard.type('keyboard-password')
     const activeAfterPasswordTyped = await page.evaluate(() => document.activeElement?.id)
     expect(activeAfterPasswordTyped).toBe('login-password')
+    await page.close()
+  })
+
+  // The brief's full required viewport matrix, plus landscape mobile.
+  const VIEWPORTS: Array<[string, number, number]> = [
+    ['desktop 1440x900', 1440, 900],
+    ['short laptop 1366x768', 1366, 768],
+    ['short laptop 1280x720', 1280, 720],
+    ['small laptop 1024x768', 1024, 768],
+    ['tablet portrait 768x1024', 768, 1024],
+    ['mobile 430', 430, 932],
+    ['mobile 390', 390, 844],
+    ['mobile 360', 360, 780],
+    ['mobile landscape', 844, 390],
+  ]
+
+  for (const [label, width, height] of VIEWPORTS) {
+    it(`has no horizontal overflow at ${label}`, async () => {
+      const page = await browser.newPage()
+      await page.setViewport({ width, height })
+      await page.goto(`${BASE}/login`, { waitUntil: 'networkidle0' })
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)
+      expect(overflow).toBe(false)
+      // Privacy/Terms must exist in the document (reachable by scrolling),
+      // never removed or display:none'd at this size.
+      const footerVisible = await page.$eval('.login-footer', (el) => getComputedStyle(el).display !== 'none')
+      expect(footerVisible).toBe(true)
+      await page.close()
+    })
+  }
+
+  it('has no horizontal overflow at 200% browser zoom', async () => {
+    const page = await browser.newPage()
+    await page.setViewport({ width: 1440, height: 900 })
+    await page.goto(`${BASE}/login`, { waitUntil: 'networkidle0' })
+    await page.evaluate(() => { document.documentElement.style.zoom = '2' })
+    await new Promise((resolve) => setTimeout(resolve, 150))
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 5)
+    expect(overflow).toBe(false)
     await page.close()
   })
 })
