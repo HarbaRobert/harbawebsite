@@ -40,6 +40,19 @@ export function getSiteUrl() {
 }
 
 /**
+ * The public marketing site's base URL, no trailing slash - used by
+ * standalone pages like /login for their "back to Harba" link and
+ * wordmark. This repository currently *is* the marketing site, so an unset
+ * MARKETING_SITE_URL correctly resolves to '' (a safe same-origin
+ * fallback: callers treat '' as "link to a relative path", never as a
+ * hardcoded domain). Only set MARKETING_SITE_URL once the application and
+ * the marketing site are deployed as separate hosts.
+ */
+export function getMarketingSiteUrl() {
+  return (process.env.MARKETING_SITE_URL || '').replace(/\/+$/, '')
+}
+
+/**
  * Public, indexable marketing routes. Each entry drives the prerendered
  * HTML's <title>, meta description, canonical URL, OG/Twitter tags and
  * sitemap.xml entry. `breadcrumbLabel` is the short label used in the
@@ -128,6 +141,9 @@ export const PUBLIC_ROUTES = [
 export const DRAFT_ROUTES = [
   { path: '/docs', title: 'Developer Documentation | Harba' },
   { path: '/technical-review', title: 'Technical Review (internal) | Harba' },
+  // Sign-in is a utility page, not a marketing destination: it should never
+  // compete with the public pages above in search results.
+  { path: '/login', title: 'Sign in | Harba' },
 ]
 
 export function findPublicRoute(pathname) {

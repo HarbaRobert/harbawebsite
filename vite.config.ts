@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       'process.env.PUBLIC_SITE_URL': JSON.stringify(env.PUBLIC_SITE_URL || ''),
+      'process.env.MARKETING_SITE_URL': JSON.stringify(env.MARKETING_SITE_URL || ''),
       'process.env.GOOGLE_SITE_VERIFICATION': JSON.stringify(env.GOOGLE_SITE_VERIFICATION || ''),
       'process.env.BING_SITE_VERIFICATION': JSON.stringify(env.BING_SITE_VERIFICATION || ''),
       'process.env.GA_MEASUREMENT_ID': JSON.stringify(env.GA_MEASUREMENT_ID || ''),

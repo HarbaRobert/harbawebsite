@@ -2,6 +2,7 @@ export const SITE_NAME: string
 export const DEFAULT_SITE_URL: string
 
 export function getSiteUrl(): string
+export function getMarketingSiteUrl(): string
 
 export interface PublicRouteConfig {
   path: string

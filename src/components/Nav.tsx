@@ -18,6 +18,7 @@ export function Nav() {
       <Link to="/technical" onClick={closeMenu}>Technical</Link>
       <Link to="/company" onClick={closeMenu}>Company</Link>
       <Link to="/book-a-demo" onClick={closeMenu}>Book a demo</Link>
+      <Link className="button button-secondary button-small" to="/login" onClick={closeMenu}>Login</Link>
       <Link className="button button-small" to="/book-a-working-session" onClick={() => { track('navigation_cta_clicked'); closeMenu() }}>Request a working session <ArrowRight /></Link>
     </nav>
   </header>
