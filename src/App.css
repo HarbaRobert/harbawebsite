@@ -222,6 +222,9 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 
 .review-detail ul { list-style: none; padding: 0; margin: 30px 0; }.small-note, .form-privacy { font-size: 12px; }.review-layout form { display: grid; gap: 16px; }.review-layout label { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; }.review-layout input, .review-layout select, .review-layout textarea { display: block; width: 100%; margin-top: 7px; padding: 12px; border: 1px solid var(--line); border-radius: 0; background: var(--paper); color: var(--ink); font-family: inherit; }.review-layout input:focus, .review-layout select:focus, .review-layout textarea:focus { outline: 2px solid #bd543f; outline-offset: 2px; }.review-layout input[aria-invalid="true"], .review-layout textarea[aria-invalid="true"] { border-color: #bd543f; }.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }.form-success { align-self: start; padding: 30px; background: var(--acid); }.form-success svg { color: #bd543f; }.form-success h2 { font-size: 34px; }.legal-placeholder { min-height: 380px; }.legal-placeholder h2 { font-size: 40px; }
 .hp-field { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Off-screen rather than clipped/display:none, per the form-relay vendor's
+   own guidance: some spam bots specifically skip fields hidden those ways. */
+.gotcha-field { position: absolute; left: -9999px; }
 .field-error { color: #bd543f; font-size: 12px; margin: -8px 0 0; }
 .form-error { color: #bd543f; font-size: 13px; border: 1px solid #bd543f; padding: 12px 14px; margin: 0; }
 .checkbox-field { display: flex; align-items: flex-start; gap: 10px; text-transform: none; font: 13px var(--mono) !important; letter-spacing: normal !important; color: var(--ink-soft); }

@@ -165,7 +165,7 @@ describe('/book-a-demo', () => {
     const { res, text } = await fetchText('/book-a-demo')
     expect(res.status).toBe(200)
     expect(text).toContain('<form')
-    expect(text).toContain('action="/api/working-session"')
+    expect(text).toContain('action="/.well-known/platform/forms/7u8XeYCOyTOpZ4bW"')
     expect(text).toContain('method="post"')
     expect(text).toContain('name="topic" value="demo"')
     expect(text).toMatch(/Book a demo/)

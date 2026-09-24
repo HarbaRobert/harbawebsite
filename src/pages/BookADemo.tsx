@@ -11,7 +11,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 }
 
 export function BookADemo() {
-  const { markStarted, status, errors, formError, submit } = useEnquiryForm({
+  const { markStarted, status, errors, formError, submit, timestampRef, formAction } = useEnquiryForm({
     requiredFields: REQUIRED_FIELDS,
     submittedEvent: 'working_session_form_submitted',
   })
@@ -41,12 +41,13 @@ export function BookADemo() {
           // real endpoint - not a GET, which would put name, email and the
           // rest of this form in the URL, browser history and server logs.
           method="post"
-          action="/api/working-session"
+          action={formAction}
           onFocus={markStarted}
           onSubmit={submit}
           noValidate
         >
-          <label className="hp-field" aria-hidden="true">Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+          <input name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" className="gotcha-field" />
+          <input type="hidden" name="_t" ref={timestampRef} />
           <input type="hidden" name="topic" value="demo" />
 
           <label htmlFor="dq-name">Name

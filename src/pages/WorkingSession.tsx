@@ -19,7 +19,7 @@ export function WorkingSession() {
   const [searchParams] = useSearchParams()
   const topic = searchParams.get('topic')
   const enquiryLabel = topic ? ENQUIRY_TYPE_LABELS[topic] : undefined
-  const { markStarted, status, errors, formError, submit } = useEnquiryForm({
+  const { markStarted, status, errors, formError, submit, timestampRef, formAction } = useEnquiryForm({
     requiredFields: REQUIRED_FIELDS,
     startedEvent: 'working_session_form_started',
     submittedEvent: 'working_session_form_submitted',
@@ -51,12 +51,13 @@ export function WorkingSession() {
           // real endpoint - not a GET, which would put name, email and the
           // rest of this form in the URL, browser history and server logs.
           method="post"
-          action="/api/working-session"
+          action={formAction}
           onFocus={markStarted}
           onSubmit={submit}
           noValidate
         >
-          <label className="hp-field" aria-hidden="true">Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+          <input name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" className="gotcha-field" />
+          <input type="hidden" name="_t" ref={timestampRef} />
           {topic && <input type="hidden" name="topic" value={topic} />}
 
           <label htmlFor="wsq-name">Name

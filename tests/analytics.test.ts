@@ -239,7 +239,7 @@ describe.skipIf(!browserPath)('consent-gated analytics (browser)', () => {
     await page.goto(`${PROD_BASE}/book-a-working-session`, { waitUntil: 'networkidle0' })
     await page.setRequestInterception(true)
     const onFailRoute = (req: import('puppeteer-core').HTTPRequest) => {
-      if (req.url().endsWith('/api/working-session')) {
+      if (req.url().endsWith('/.well-known/platform/forms/7u8XeYCOyTOpZ4bW')) {
         req.respond({ status: 500, contentType: 'application/json', body: JSON.stringify({ ok: false, message: 'fail' }) })
       } else {
         req.continue()
@@ -255,7 +255,7 @@ describe.skipIf(!browserPath)('consent-gated analytics (browser)', () => {
     // Then: a successful submission fires it exactly once, even if the button were clicked twice (it is disabled while submitting).
     let apiCallCount = 0
     const onSuccessRoute = (req: import('puppeteer-core').HTTPRequest) => {
-      if (req.url().endsWith('/api/working-session')) {
+      if (req.url().endsWith('/.well-known/platform/forms/7u8XeYCOyTOpZ4bW')) {
         apiCallCount++
         req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) })
       } else {

@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { track, type EventName } from '../lib/analytics'
 
 export type FieldErrors = Record<string, string>
 export type EnquiryStatus = 'idle' | 'submitting' | 'success' | 'error'
+
+// Platform-provided form-relay endpoint. Deliberately a relative path (see
+// the vendor's own note): it keeps working regardless of which domain the
+// site is reached by, so it must never be made absolute.
+const FORM_ENDPOINT = '/.well-known/platform/forms/7u8XeYCOyTOpZ4bW'
 
 interface UseEnquiryFormOptions {
   requiredFields: string[]
@@ -12,16 +17,32 @@ interface UseEnquiryFormOptions {
 
 /**
  * Shared submission mechanics for both the working-session and demo forms
- * (src/pages/WorkingSession.tsx and src/pages/BookADemo.tsx): the honeypot
- * check, client-side validation, and the POST to /api/working-session. Each
- * page owns its own JSX and copy, but both need the same security-sensitive
- * behaviour, so that lives here once rather than twice.
+ * (src/pages/WorkingSession.tsx and src/pages/BookADemo.tsx): client-side
+ * validation plus submission to the platform's form-relay endpoint.
+ *
+ * The endpoint takes application/x-www-form-urlencoded, not JSON or
+ * multipart - passing a FormData straight to fetch encodes it as a file
+ * upload, which the endpoint refuses, so the body must be built via
+ * URLSearchParams instead. Its own anti-spam checks look for two specific
+ * fields, which every form using this hook must include:
+ *   - `_gotcha`: an empty honeypot input, positioned off-screen (not
+ *     display:none - some bots skip fields hidden that way).
+ *   - `_t`: a hidden timestamp, set client-side on mount via the
+ *     timestampRef this hook returns (equivalent to the vendor's own
+ *     inline <script> that stamps it on page load).
  */
 export function useEnquiryForm({ requiredFields, startedEvent, submittedEvent }: UseEnquiryFormOptions) {
   const [started, setStarted] = useState(false)
   const [status, setStatus] = useState<EnquiryStatus>('idle')
   const [errors, setErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
+  const timestampRef = useRef<HTMLInputElement>(null)
+
+  // Client-only, after mount: matches the vendor's inline <script>, and
+  // avoids baking a build-time timestamp into the prerendered HTML.
+  useEffect(() => {
+    if (timestampRef.current) timestampRef.current.value = String(Date.now())
+  }, [])
 
   const markStarted = () => {
     if (started) return
@@ -46,7 +67,7 @@ export function useEnquiryForm({ requiredFields, startedEvent, submittedEvent }:
     const data = new FormData(form)
 
     // Honeypot: real visitors never see or fill this field in.
-    if (String(data.get('website') ?? '').trim()) {
+    if (String(data.get('_gotcha') ?? '').trim()) {
       setStatus('success')
       return
     }
@@ -62,10 +83,14 @@ export function useEnquiryForm({ requiredFields, startedEvent, submittedEvent }:
     setStatus('submitting')
 
     try {
-      const response = await fetch('/api/working-session', {
+      const response = await fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(data)),
+        headers: { Accept: 'application/json' },
+        // FormData satisfies the iterable-of-pairs protocol at runtime, but
+        // the DOM lib's URLSearchParams overloads don't list it directly -
+        // materialising the entries as string[][] hits a real, typed
+        // overload without an unsafe cast.
+        body: new URLSearchParams(Array.from(data.entries()) as [string, string][]),
       })
       const result = await response.json().catch(() => null)
 
@@ -79,12 +104,7 @@ export function useEnquiryForm({ requiredFields, startedEvent, submittedEvent }:
         setStatus('success')
         return
       }
-      if (response.status === 400 && result?.errors) {
-        setErrors(result.errors)
-        setStatus('idle')
-        return
-      }
-      setFormError(result?.message || 'Something went wrong. Please try again or email rob@harba.ai directly.')
+      setFormError('Something went wrong. Please try again or email rob@harba.ai directly.')
       setStatus('error')
     } catch {
       setFormError('Something went wrong. Please check your connection and try again, or email rob@harba.ai directly.')
@@ -92,5 +112,5 @@ export function useEnquiryForm({ requiredFields, startedEvent, submittedEvent }:
     }
   }
 
-  return { started, markStarted, status, errors, formError, submit }
+  return { started, markStarted, status, errors, formError, submit, timestampRef, formAction: FORM_ENDPOINT }
 }
