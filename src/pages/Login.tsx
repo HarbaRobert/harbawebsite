@@ -27,8 +27,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
  * only in an effect, never a render-phase window/document read - this page
  * is never prerendered with real body content (see DRAFT_ROUTES), so there
  * is no hydration mismatch risk here, but the pattern is kept consistent
- * with the rest of the codebase (see useJourneyScene in
- * HarbaEnquiryVisual.tsx) in case that ever changes.
+ * with the rest of the codebase (see useHeroLoop in
+ * HeroEnvironment.tsx) in case that ever changes.
  */
 function useMotionAllowed() {
   const [allowed, setAllowed] = useState(true)
