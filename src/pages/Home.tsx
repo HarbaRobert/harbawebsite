@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { BrainCircuit, Check, ChevronLeft, ChevronRight, FileSearch, Gauge, Layers, Link2, MessageCircle, Phone, ShieldCheck, Users, Workflow } from 'lucide-react'
 import { Eyebrow, ButtonLink, SectionHeading, TextLink, CTA } from '../components/ui'
-import { HarbaSystemVisual } from '../components/HarbaSystemVisual'
+import { HarbaEnquiryVisual } from '../components/HarbaEnquiryVisual'
 import { capabilityRow, engageSteps, failedPaths, moduleCards, stackShowcase, trustTiles } from '../data/site'
 
 const platformIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -123,7 +123,7 @@ export function Home() {
           <ButtonLink to="/book-a-demo" secondary event="secondary_cta_clicked">Book a demo</ButtonLink>
         </div>
       </div>
-      <div className="hero-visual"><HarbaSystemVisual /></div>
+      <div className="hero-visual"><HarbaEnquiryVisual /></div>
     </section>
 
     <section className="section paper" id="platform"><div className="container"><h2 className="platform-title">The platform</h2><PlatformShowcase /></div></section>

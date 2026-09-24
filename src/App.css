@@ -10,91 +10,95 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 
 /* Hero + workflow graphic */
 .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: start; padding-top: 60px; padding-bottom: 72px; }.hero h1 { font-size: clamp(38px, 5vw, 68px); }.hero-copy > p { font-size: 17px; margin-bottom: 26px; }.hero-actions { display: flex; flex-wrap: wrap; gap: 11px; }
-/* Harba system visual (hero) - see src/components/HarbaSystemVisual.tsx and
-   src/data/heroVisual.ts for the state machine this animates. */
-.harba-visual { width: 100%; }
+/* Harba enquiry visual (hero) - see src/components/HarbaEnquiryVisual.tsx
+   and src/data/heroJourney.ts for the state machine this animates. */
+.journey { width: 100%; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-.harba-visual-toolbar { display: flex; align-items: center; margin-bottom: 14px; min-height: 28px; }
-.harba-caption { margin: 0; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .03em; color: var(--ink-soft); text-align: right; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.journey-toolbar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; min-height: 28px; }
+.journey-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink-soft); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; cursor: pointer; flex: none; transition: border-color .2s, color .2s; }
+.journey-toggle:hover, .journey-toggle:focus-visible { border-color: #bd543f; color: var(--ink); outline: none; }
+.journey-toggle svg { width: 13px; }
+.journey-caption { margin: 0; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .03em; color: var(--ink-soft); text-align: right; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.harba-stage-mobile { display: none; }
+.journey-stage-mobile { display: none; }
 
-/* Three-column spine: external systems (light) | entry lane | Harba operating area (dark). */
-.harba-stage-full { display: grid; grid-template-columns: 112px 36px 1fr; align-items: stretch; min-height: 500px; }
-.harba-systems-col { display: flex; flex-direction: column; justify-content: space-evenly; gap: 10px; padding: 20px 0; }
-.harba-system-card { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; text-align: left; padding: 11px 12px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink-soft); transition: border-color .25s, color .25s, background .25s; }
-.harba-system-card.is-active { border-color: var(--acid); background: var(--night); color: var(--paper); }
+.journey-stage-full { position: relative; display: flex; flex-direction: column; min-height: 560px; border: 1px solid var(--ink); background: var(--paper-light); overflow: hidden; }
 
-.harba-entry-lane { display: flex; align-items: center; padding: 0 6px; }
-.harba-wire-entry { width: 100%; height: 1px; background: var(--line); }
-.harba-wire-entry.is-active { background: var(--acid); }
+/* Outside Harba: the customer's own people and systems, on the warm off-white background. */
+.journey-outside { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 18px; }
+.journey-outside-top { min-height: 52px; }
+.journey-outside-bottom { overflow: hidden; }
 
-.harba-operation { position: relative; background: var(--night); color: var(--paper); border: 1px solid var(--ink); padding: 24px; display: flex; flex-direction: column; gap: 0; box-shadow: inset 0 0 0 0 var(--acid); transition: box-shadow .5s; }
-.harba-operation.is-complete { box-shadow: inset 0 0 0 1px var(--acid); }
+.journey-user { display: flex; align-items: center; gap: 8px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); padding: 9px 12px; border: 1px solid var(--line); background: var(--paper); flex: none; transition: border-color .25s, color .25s; }
+.journey-user svg { width: 15px; }
+.journey-user.is-focal { border-color: #bd543f; color: var(--ink); }
 
-.harba-pipeline-row { display: flex; flex-direction: column; gap: 12px; }
-.harba-pipeline-label { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--acid); }
-.harba-pipeline-track { display: flex; flex-wrap: wrap; gap: 8px 14px; }
-.harba-pipeline-step { display: flex; align-items: center; gap: 6px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .03em; color: #67766e; transition: color .2s; }
-.harba-pipeline-step svg { width: 13px; color: var(--acid); flex: none; }
-.harba-step-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid #67766e; flex: none; }
-.harba-pipeline-step.is-complete { color: var(--paper); }
-.harba-pipeline-step.is-active { color: var(--paper); font-weight: 500; }
-.harba-pipeline-step.is-active .harba-step-dot { border-color: var(--acid); background: var(--acid); animation: harbaPulse 1.2s ease-in-out infinite; }
+.journey-bubble { font-size: 13px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 9px 13px; max-width: 260px; opacity: 0; transform: translateY(-6px); animation: journeyBubbleIn .5s ease forwards; }
 
-/* Big Brain and the two Teammates: separate components branching off the
-   spine, never rendered inside the pipeline track above. */
-.harba-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
-.harba-branch { display: flex; flex-direction: column; align-items: stretch; min-width: 0; position: relative; }
+.journey-system { flex: none; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); padding: 9px 12px; border: 1px solid var(--line); background: var(--paper); opacity: .5; transform: translateY(12px); transition: transform .4s ease, opacity .4s ease, border-color .25s; }
+.journey-system.is-active { opacity: 1; transform: translateY(0); border-color: var(--acid); }
+.journey-system.is-focal { border-color: #bd543f; }
+.journey-system-label { display: block; }
+.journey-system-status { display: block; margin-top: 3px; font-size: 10px; text-transform: none; letter-spacing: normal; color: var(--ink-soft); }
+.journey-system.is-active .journey-system-status { color: #bd543f; }
 
-.harba-wire { display: block; position: relative; background: #445048; transition: background .25s; }
-.harba-wire.is-active { background: var(--acid); }
-.harba-wire-vertical { width: 1px; height: 20px; margin: 0 auto; }
-.harba-wire-horizontal { position: absolute; top: 48px; left: -14px; width: 14px; height: 1px; }
-.harba-wire-approval { height: 24px; margin-top: 22px; }
-.harba-wire-dot { position: absolute; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: var(--acid); }
-.harba-wire-vertical .harba-wire-dot { left: 50%; top: 0; animation: harbaFlowDown 1s linear infinite; }
-.harba-wire-vertical.is-reverse .harba-wire-dot { animation-name: harbaFlowUp; }
-.harba-wire-horizontal .harba-wire-dot { top: 50%; left: 0; animation: harbaFlowRight 1s linear infinite; }
-.harba-wire-entry .harba-wire-dot { top: 50%; left: 0; animation: harbaFlowRight 1.1s linear infinite; }
-.harba-wire-entry.is-reverse .harba-wire-dot { animation-name: harbaFlowLeft; }
-@keyframes harbaFlowDown { from { top: 0; opacity: 0; } 20% { opacity: 1; } to { top: 100%; opacity: 1; } }
-@keyframes harbaFlowUp { from { top: 100%; opacity: 0; } 20% { opacity: 1; } to { top: 0; opacity: 1; } }
-@keyframes harbaFlowRight { from { left: 0; opacity: 0; } 20% { opacity: 1; } to { left: 100%; opacity: 1; } }
-@keyframes harbaFlowLeft { from { left: 100%; opacity: 0; } 20% { opacity: 1; } to { left: 0; opacity: 1; } }
-@keyframes harbaPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+/* The boundary between the customer's world and Harba - always visible, briefly lit when something crosses it. */
+.journey-seam { position: relative; height: 8px; flex: none; background: var(--line); transition: background .3s; }
+.journey-seam.is-active { background: var(--acid); }
+.journey-seam.is-active.is-outbound { background: #bd543f; }
+.journey-seam-dot { position: absolute; top: 50%; left: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: inherit; box-shadow: 0 0 0 3px var(--paper-light); }
 
-.harba-node { border: 1px solid #445048; background: transparent; padding: 13px 14px; display: flex; align-items: center; gap: 11px; transition: border-color .25s; }
-.harba-node-title { display: block; font-size: 14px; color: var(--paper); }
-.harba-node-status { display: block; font: 10px var(--mono); color: #8b9791; margin-top: 3px; transition: color .25s; }
+/* Inside Harba: one coherent, dark operating environment. */
+.journey-harba { position: relative; flex: 1; display: flex; flex-direction: column; gap: 14px; background: var(--night); color: var(--paper); padding: 20px 18px; }
+.journey-harba.is-paused > *:not(.journey-approval) { opacity: .3; transition: opacity .4s; }
+.journey-harba-label { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; line-height: 1.6; color: var(--acid); }
 
-.harba-bigbrain-core { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--acid); flex: none; position: relative; }
-.harba-bigbrain-core::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--acid); opacity: .4; }
-.harba-bigbrain.is-active { border-color: #bd543f; }
-.harba-bigbrain.is-active .harba-bigbrain-core::after { animation: harbaPulse 1.2s ease-in-out infinite; }
-.harba-bigbrain.is-active .harba-node-status { color: #bd543f; }
+.journey-harba-row { display: flex; gap: 10px; }
+.journey-teammate, .journey-bigbrain { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; border: 1px solid #445048; padding: 11px 12px; transition: border-color .25s, transform .3s; }
+.journey-teammate svg, .journey-bigbrain svg { width: 15px; color: #8b9791; flex: none; }
+.journey-node-title { display: block; font-size: 13px; }
+.journey-node-status { display: block; margin-top: 3px; font: 10px var(--mono); color: #8b9791; }
+.journey-teammate.is-active, .journey-bigbrain.is-active { border-color: var(--acid); }
+.journey-teammate.is-active svg, .journey-bigbrain.is-active svg { color: var(--acid); }
+.journey-teammate.is-active .journey-node-status, .journey-bigbrain.is-active .journey-node-status { color: var(--acid); }
+.journey-teammate.is-focal, .journey-bigbrain.is-focal { transform: scale(1.03); box-shadow: 0 0 0 1px var(--acid); }
 
-.harba-teammate svg { width: 15px; color: #8b9791; flex: none; }
-.harba-teammate.is-active { border-color: var(--acid); }
-.harba-teammate.is-active svg { color: var(--acid); }
-.harba-teammate.is-active .harba-node-status { color: var(--acid); }
+.journey-workitem { border: 1px solid var(--acid); background: rgba(196, 243, 106, .06); padding: 20px; text-align: center; transition: transform .3s; }
+.journey-workitem.is-focal { transform: scale(1.02); }
+.journey-workitem-eyebrow { display: block; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--acid); }
+.journey-workitem p { margin: 6px 0 0; color: var(--paper); font-size: 15px; }
 
-.harba-approval { display: flex; align-items: center; gap: 14px; margin-top: 0; padding: 14px 16px; border: 1px solid #445048; transition: border-color .25s, background .25s; }
-.harba-approval svg { width: 18px; color: #8b9791; flex: none; }
-.harba-approval.is-pending { border-color: #bd543f; background: rgba(189, 84, 63, .1); }
-.harba-approval.is-pending svg { color: #bd543f; }
-.harba-approval.is-pending .harba-node-status { color: #e08a76; }
-.harba-approval.is-approved { border-color: var(--acid); }
-.harba-approval.is-approved svg { color: var(--acid); }
-.harba-approval.is-approved .harba-node-status { color: var(--acid); }
+.journey-rail { display: flex; justify-content: space-between; gap: 4px; border-top: 1px solid #445048; padding-top: 12px; margin-top: auto; }
+.journey-rail-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .02em; color: #67766e; text-align: center; }
+.journey-rail-step svg { width: 12px; color: var(--acid); }
+.journey-rail-dot { width: 6px; height: 6px; border-radius: 50%; border: 1px solid #67766e; }
+.journey-rail-step.is-complete { color: var(--paper); }
+.journey-rail-step.is-active { color: var(--paper); }
+.journey-rail-step.is-active .journey-rail-dot { border-color: var(--acid); background: var(--acid); animation: journeyPulse 1.2s ease-in-out infinite; }
 
-/* Simplified four-stage mobile view (see MOBILE_STAGES in heroVisual.ts). */
-.harba-mobile-stage { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink-soft); font: 12px var(--mono); text-transform: uppercase; letter-spacing: .03em; transition: border-color .3s, color .3s, background .3s; }
-.harba-mobile-stage + .harba-mobile-stage { margin-top: 8px; }
-.harba-mobile-stage .harba-step-dot { border-color: #b7bdb2; }
-.harba-mobile-stage.is-active { border-color: var(--acid); background: var(--night); color: var(--paper); }
-.harba-mobile-stage.is-active .harba-step-dot { border-color: var(--acid); background: var(--acid); animation: harbaPulse 1.2s ease-in-out infinite; }
+/* The approval moment: the strongest, most memorable point - brought to
+   the centre in front of everything else, which visibly dims behind it. */
+.journey-approval { position: absolute; top: 50%; left: 50%; z-index: 3; width: min(280px, calc(100% - 56px)); background: var(--night); border: 1px solid var(--acid); padding: 18px 20px; box-shadow: 0 18px 36px rgba(0, 0, 0, .4); animation: journeyApprovalIn .4s ease forwards; }
+.journey-approval-title { display: flex; align-items: center; gap: 8px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: #bd543f; }
+.journey-approval-title svg { width: 15px; }
+.journey-approval p { margin: 8px 0 0; font-size: 14px; color: var(--paper); }
+.journey-approval-status { display: flex; align-items: center; gap: 6px; margin-top: 12px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: #e08a76; }
+.journey-approval-status svg { width: 14px; }
+.journey-approval.is-approved { border-color: var(--acid); }
+.journey-approval.is-approved .journey-approval-title { color: var(--acid); }
+.journey-approval.is-approved .journey-approval-status { color: var(--acid); }
+
+@keyframes journeyBubbleIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes journeyApprovalIn { from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); } to { opacity: 1; transform: translate(-50%, -50%); } }
+@keyframes journeyPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Simplified five-stage mobile view (see MOBILE_STAGES in heroJourney.ts). */
+.journey-mobile-stage { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink-soft); font: 12px var(--mono); text-transform: uppercase; letter-spacing: .03em; transition: border-color .3s, color .3s, background .3s; }
+.journey-mobile-stage + .journey-mobile-stage { margin-top: 8px; }
+.journey-mobile-stage .journey-rail-dot { border-color: #b7bdb2; }
+.journey-mobile-stage.is-active { border-color: var(--acid); background: var(--night); color: var(--paper); }
+.journey-mobile-stage.is-active .journey-rail-dot { border-color: var(--acid); background: var(--acid); animation: journeyPulse 1.2s ease-in-out infinite; }
 
 .section { padding: 88px 0; }.paper { background: var(--paper-light); }.dark { background: var(--night); color: var(--paper); }.dark p { color: #aeb8ad; }.dark .eyebrow { color: var(--acid); }.dark .section-heading p { color: #aeb8ad; }
 .section-heading { margin: 14px 0 44px; }.section-heading h2 { max-width: 750px; }.section-heading p { max-width: 480px; margin-top: 16px; }
@@ -239,11 +243,13 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
   .site-nav { display: none; position: absolute; z-index: 5; top: 82px; left: 0; right: 0; padding: 22px 20px 30px; background: var(--paper-light); border-bottom: 1px solid var(--line); flex-direction: column; align-items: stretch; }.site-nav.is-open { display: flex; }.site-nav a:not(.button) { padding: 10px 0; font-size: 16px; }.site-nav .button { margin-top: 10px; }
   .container { width: min(100% - 40px, 700px); }.container-wide { width: calc(100% - 40px); }
   .hero { grid-template-columns: 1fr; padding-top: 75px; }.hero-visual { margin-top: 44px; }
-  .harba-stage-full { min-height: 440px; grid-template-columns: 92px 24px 1fr; }
-  .harba-systems-col { justify-content: space-around; gap: 8px; }
-  .harba-operation { padding: 18px; }
-  .harba-branches { gap: 8px; margin-top: 18px; }
-  .harba-node { padding: 11px 12px; gap: 9px; }
+  .journey-stage-full { min-height: 480px; }
+  .journey-outside { padding: 12px 16px; }
+  .journey-harba { padding: 18px 16px; gap: 12px; }
+  .journey-harba-row { gap: 8px; }
+  .journey-teammate, .journey-bigbrain { padding: 10px 11px; }
+  .journey-workitem { padding: 16px; }
+  .journey-rail-step span:last-child { display: none; }
   .failed-paths, .module-grid, .stack-grid, .process-steps { grid-template-columns: repeat(2, 1fr); }
   .trust-tiles { grid-template-columns: repeat(2, 1fr); }
   .trust-layout, .about-grid, .review-layout, .stage-grid, .pricing-grid, .founders-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -266,12 +272,12 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 @media (max-width: 560px) {
   h1 { font-size: 49px; }.section { padding: 75px 0; }.page-intro { padding-top: 65px; padding-bottom: 60px; }.hero { padding-bottom: 75px; }.hero-actions { flex-direction: column; align-items: stretch; }
   .showcase-frame { min-height: 280px; }
-  /* Below 560px, swap the full diagram for four plain-language stages
-     rather than shrinking the desktop graphic until its labels are
-     unreadable - see MOBILE_STAGES in src/data/heroVisual.ts. */
-  .harba-stage-full { display: none; }
-  .harba-stage-mobile { display: flex; flex-direction: column; }
-  .harba-caption { text-align: left; }
+  /* Below 560px, swap the full diagram for plain-language stages rather
+     than shrinking the desktop graphic until its labels are unreadable -
+     see MOBILE_STAGES in src/data/heroJourney.ts. */
+  .journey-stage-full { display: none; }
+  .journey-stage-mobile { display: flex; flex-direction: column; }
+  .journey-caption { text-align: left; }
   .failed-paths, .process-steps, .module-grid, .stack-grid, .usecase-steps, .system-grid, .principles-grid { grid-template-columns: 1fr; }
   .trust-tiles { grid-template-columns: 1fr; }
   .capability-row { gap: 8px; }
