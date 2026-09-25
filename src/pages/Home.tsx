@@ -37,6 +37,14 @@ const platformImages: Record<string, { src: string; alt: string }> = {
     src: '/showcase-big-brain.webp',
     alt: 'Big Brain showing workspace datasets such as Customer Notes and Support Cases, embedding status, searchable filters and a search-by-meaning box for browsing records.',
   },
+  modules: {
+    src: '/showcase-modules.webp',
+    alt: 'The Modules library showing a Parts Sourcing module: its included pipeline steps and specialist Teammates, a purpose-built part-requests interface, and options to configure it around the business.',
+  },
+  'personal-assistant': {
+    src: '/showcase-personal-assistant.webp',
+    alt: 'The Personal Assistant answering a request for a daily update with today’s priorities, a meeting summary, outstanding follow-ups, and quick actions to ask a teammate, draft a reply or find information.',
+  },
 }
 
 const capabilityIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
