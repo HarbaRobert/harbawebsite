@@ -48,7 +48,7 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 
 /* Platform showcase (editorial carousel: copy + controls left, large visual right) */
 .platform-title { margin-bottom: 20px; }
-.platform-showcase { display: grid; grid-template-columns: 38% 1fr; grid-template-rows: 1fr auto; column-gap: 48px; grid-template-areas: "copy visual" "controls visual"; }
+.platform-showcase { display: grid; grid-template-columns: 38% 1fr; grid-template-rows: 1fr auto; align-items: start; column-gap: 48px; grid-template-areas: "copy visual" "controls visual"; }
 .platform-showcase-copy { grid-area: copy; align-self: start; }
 .platform-slide-count { display: block; font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #bd543f; margin-bottom: 16px; }
 .platform-showcase-copy h3 { font-size: clamp(28px, 3vw, 40px); margin: 0 0 16px; }
@@ -57,9 +57,14 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 .platform-showcase-controls { grid-area: controls; display: flex; align-items: center; gap: 16px; padding-top: 24px; }
 .platform-nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; transition: background .2s; flex: none; }
 .platform-nav-btn:hover { background: var(--paper-light); }.platform-nav-btn svg { width: 18px; }
-.platform-showcase-visual { grid-area: visual; height: 100%; }
-.showcase-frame { position: relative; width: 100%; height: 100%; min-height: 540px; border: 1px solid var(--line); background: linear-gradient(135deg, var(--paper) 0%, var(--paper-light) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.platform-showcase-visual { grid-area: visual; }
+/* 16:9 (matches the real product screenshots used here, e.g. the Pipelines
+   builder) - a fixed aspect ratio rather than a fixed height, so the frame
+   scales cleanly with its column width at every breakpoint and never
+   crops or letterboxes the image. */
+.showcase-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); background: linear-gradient(135deg, var(--paper) 0%, var(--paper-light) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .showcase-frame svg { width: 25%; height: 25%; opacity: .14; color: var(--ink); }
+.showcase-image { width: 100%; height: 100%; object-fit: cover; display: block; }
 .showcase-frame-tag { position: absolute; left: 18px; bottom: 18px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; background: var(--night); color: var(--paper); padding: 7px 12px; }
 .showcase-dots { display: flex; align-items: center; gap: 8px; }.showcase-dot { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 1px solid var(--ink-soft); background: transparent; cursor: pointer; }.showcase-dot.is-active { background: var(--ink); border-color: var(--ink); }
 @keyframes platformFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -177,13 +182,11 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
   .usecase-tab:nth-of-type(6) { order: 10; }.usecase-panel:nth-of-type(6) { order: 11; }
   .usecase-steps, .system-grid { grid-template-columns: repeat(2, 1fr); }
   .platform-showcase { grid-template-columns: 1fr; grid-template-rows: auto auto auto; grid-template-areas: "copy" "visual" "controls"; row-gap: 28px; }
-  .showcase-frame { min-height: 380px; }
   .platform-showcase-controls { padding-top: 0; }
 }
 
 @media (max-width: 560px) {
   h1 { font-size: 49px; }.section { padding: 75px 0; }.page-intro { padding-top: 65px; padding-bottom: 60px; }.hero { padding: 56px 20px 44px; min-height: 0; }.hero-actions { flex-direction: column; align-items: stretch; }
-  .showcase-frame { min-height: 280px; }
   .failed-paths, .process-steps, .module-grid, .stack-grid, .usecase-steps, .system-grid, .principles-grid { grid-template-columns: 1fr; }
   .trust-tiles { grid-template-columns: 1fr; }
   .capability-row { gap: 8px; }

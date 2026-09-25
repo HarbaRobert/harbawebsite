@@ -12,6 +12,25 @@ const platformIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGEle
   'personal-assistant': MessageCircle,
 }
 
+// Real product screenshots, keyed by stackShowcase id. A slide without an
+// entry here falls back to its placeholder icon frame (see
+// platformIcons above) until its own screenshot is ready.
+//
+// Served from public/ with a plain absolute path rather than imported as a
+// module: an imported asset resolves to Vite's dev-server URL when this
+// component is server-rendered during prerendering (scripts/prerender.mjs
+// uses vite.ssrLoadModule, which never rewrites it to the hashed
+// production URL the client bundle gets), so the very first paint's <img>
+// 404s until React hydrates and corrects it. A public/ path is the exact
+// same string in the dev server, the prerendered HTML and the client
+// bundle - same pattern already used for favicon.svg/icons.svg.
+const platformImages: Record<string, { src: string; alt: string }> = {
+  pipelines: {
+    src: '/showcase-pipelines.webp',
+    alt: 'The Pipelines builder showing a Customer Onboarding pipeline: research, analysis, a human review step and CRM update, alongside a completed run’s details, cost and token usage.',
+  },
+}
+
 const capabilityIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   voice: Phone,
   messaging: MessageCircle,
@@ -41,6 +60,7 @@ function PlatformShowcase() {
 
   const slide = stackShowcase[active]
   const Icon = platformIcons[slide.id]
+  const image = platformImages[slide.id]
 
   return <div
     className="platform-showcase"
@@ -67,8 +87,14 @@ function PlatformShowcase() {
 
     <div className="platform-showcase-visual" key={`visual-${slide.id}`}>
       <div className="showcase-frame">
-        <Icon aria-hidden="true" />
-        <span className="showcase-frame-tag">Placeholder — {slide.title} view</span>
+        {image ? (
+          <img className="showcase-image" src={image.src} alt={image.alt} />
+        ) : (
+          <>
+            <Icon aria-hidden="true" />
+            <span className="showcase-frame-tag">Placeholder — {slide.title} view</span>
+          </>
+        )}
       </div>
     </div>
   </div>
