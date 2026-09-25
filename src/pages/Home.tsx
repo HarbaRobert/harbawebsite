@@ -29,6 +29,14 @@ const platformImages: Record<string, { src: string; alt: string }> = {
     src: '/showcase-pipelines.webp',
     alt: 'The Pipelines builder showing a Customer Onboarding pipeline: research, analysis, a human review step and CRM update, alongside a completed run’s details, cost and token usage.',
   },
+  teammates: {
+    src: '/showcase-teammates.webp',
+    alt: 'A Research Analyst Teammate answering a chat question with a market trends overview, opportunities and recommended next steps, sourced from workspace knowledge and connected tools.',
+  },
+  'big-brain': {
+    src: '/showcase-big-brain.webp',
+    alt: 'Big Brain showing workspace datasets such as Customer Notes and Support Cases, embedding status, searchable filters and a search-by-meaning box for browsing records.',
+  },
 }
 
 const capabilityIcons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
