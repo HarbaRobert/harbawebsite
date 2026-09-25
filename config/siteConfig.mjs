@@ -144,6 +144,7 @@ export const DRAFT_ROUTES = [
   // Sign-in is a utility page, not a marketing destination: it should never
   // compete with the public pages above in search results.
   { path: '/login', title: 'Sign in | Harba' },
+  { path: '/forgot-password', title: 'Reset your password | Harba' },
 ]
 
 export function findPublicRoute(pathname) {

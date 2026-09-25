@@ -20,6 +20,7 @@ import { TechnicalReview } from '../pages/TechnicalReview'
 import { TechnicalOverview } from '../pages/TechnicalOverview'
 import { Docs } from '../pages/Docs'
 import { Login } from '../pages/Login'
+import { ForgotPassword } from '../pages/ForgotPassword'
 import { findPublicRoute } from '../../config/siteConfig.mjs'
 import { useDocumentHead } from '../hooks/useDocumentHead'
 import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayoutEffect'
@@ -28,9 +29,10 @@ import { onConsentChange } from '../lib/consent'
 
 // The internal workspace has its own header, progress summary and section
 // sidebar, so it is rendered without any public marketing chrome at all.
-// /login is likewise its own fully-branded standalone page (its own minimal
-// header and footer - see Login.tsx) rather than the marketing nav/footer.
-const STANDALONE_ROUTES = new Set(['/technical-review', '/login'])
+// /login and /forgot-password are likewise their own fully-branded
+// standalone pages (their own minimal header and footer - see Login.tsx
+// and ForgotPassword.tsx) rather than the marketing nav/footer.
+const STANDALONE_ROUTES = new Set(['/technical-review', '/login', '/forgot-password'])
 
 // Documentation keeps the footer (legal links stay reachable) but replaces
 // the full marketing nav with its own compact header, so it does not clutter
@@ -109,6 +111,7 @@ export function SiteShell({ forceProd = false }: { forceProd?: boolean } = {}) {
           <Route path="/technical" element={<TechnicalOverview />} />
           <Route path="/docs" element={<Docs />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

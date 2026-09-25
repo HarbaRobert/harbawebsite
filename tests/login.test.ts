@@ -195,13 +195,15 @@ describe.skipIf(!browserPath)('/login (browser)', () => {
     await page.close()
   })
 
-  it('has no forgotten-password link (no reset route exists) and no public create-account CTA', async () => {
+  it('has a forgotten-password link to /forgot-password beside the password field, and no public create-account CTA', async () => {
     const page = await newPage()
     const bodyText = await page.evaluate(() => document.body.textContent || '')
-    expect(bodyText).not.toMatch(/forgotten your password/i)
+    expect(bodyText).toMatch(/forgotten your password/i)
     expect(bodyText).not.toMatch(/create one|create an? account|sign up/i)
     expect(bodyText).toMatch(/need access/i)
     expect(bodyText).toMatch(/contact your workspace administrator/i)
+    const forgotHref = await page.$eval('.login-forgot-link', (el) => el.getAttribute('href'))
+    expect(forgotHref).toBe('/forgot-password')
     const mailto = await page.$eval('a[href^="mailto:"]', (el) => el.getAttribute('href'))
     expect(mailto).toBe('mailto:help@harba.ai')
     await page.close()
@@ -292,10 +294,13 @@ describe.skipIf(!browserPath)('/login (browser)', () => {
     await page.close()
   })
 
-  it('works end-to-end with the mouse never touching the keyboard (tab order reaches every control)', async () => {
+  it('works end-to-end with the mouse never touching the keyboard (tab order reaches every control, including the forgotten-password link)', async () => {
     const page = await newPage()
     await page.focus('#login-email')
     await page.keyboard.type('keyboard-user@example.com')
+    await page.keyboard.press('Tab')
+    const afterFirstTab = await page.evaluate(() => document.activeElement?.className)
+    expect(afterFirstTab).toContain('login-forgot-link') // reachable by keyboard, between email and password
     await page.keyboard.press('Tab')
     await page.keyboard.type('keyboard-password')
     const activeAfterPasswordTyped = await page.evaluate(() => document.activeElement?.id)

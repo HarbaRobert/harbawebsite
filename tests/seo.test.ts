@@ -191,7 +191,7 @@ describe('unknown routes', () => {
 })
 
 describe('draft routes (not part of the customer journey)', () => {
-  for (const draftPath of ['/docs', '/technical-review', '/login']) {
+  for (const draftPath of ['/docs', '/technical-review', '/login', '/forgot-password']) {
     it(`${draftPath} is reachable but marked noindex, nofollow`, async () => {
       const { res, text } = await fetchText(draftPath)
       expect(res.status).toBe(200)
@@ -221,7 +221,7 @@ describe('sitemap.xml', () => {
     const indexableRoutes = getIndexableRoutes()
     expect(locs.length).toBe(indexableRoutes.length)
 
-    for (const draftPath of ['/docs', '/technical-review', '/login']) {
+    for (const draftPath of ['/docs', '/technical-review', '/login', '/forgot-password']) {
       expect(locs.some((loc) => loc.endsWith(draftPath))).toBe(false)
     }
 

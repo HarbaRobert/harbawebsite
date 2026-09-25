@@ -481,6 +481,10 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 .login-panel .checkbox-field input[type="checkbox"] { width: 18px !important; height: 18px !important; flex: none; }
 .login-panel .checkbox-field input[type="checkbox"]:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
 
+.login-password-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.login-forgot-link { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--acid); text-decoration: none; white-space: nowrap; }
+.login-forgot-link:hover, .login-forgot-link:focus-visible { color: var(--paper); }
+
 .login-password-row { position: relative; display: flex; align-items: center; }
 .login-password-row input { padding-right: 54px; }
 /* ~44x44 hit area (visually restrained: transparent background, small
@@ -494,6 +498,8 @@ h1, h2, h3, p { margin-top: 0; } h1, h2, h3 { letter-spacing: -.055em; font-weig
 
 .login-access-help { margin-top: 28px; padding-top: 24px; border-top: 1px solid #445048; font-size: 13px; color: #aeb8ad; }
 .login-access-help a { color: var(--acid); }
+
+.login-reset-sent { margin: 0; padding: 16px 18px; border: 1px solid var(--acid); background: rgba(196,243,106,.08); color: var(--paper); font-size: 14px; line-height: 1.5; }
 
 .login-footer { flex: none; display: flex; justify-content: center; gap: 24px; padding: 20px 0; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; }
 .login-footer a { color: var(--ink-soft); text-decoration: none; }
